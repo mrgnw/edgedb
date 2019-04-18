@@ -250,6 +250,10 @@ def _get_set_rvar(
         rvars = process_set_as_tuple_indirection(ir_set, stmt, ctx=ctx)
 
     elif isinstance(ir_set.expr, irast.FunctionCall):
+        if not ctx.session_mode and ir_set.expr.session_only:
+            raise RuntimeError(
+                f'{ir_set.expr.func_shortname} requires a session')
+
         if ir_set.expr.func_shortname == 'std::enumerate':
             if isinstance(irutils.unwrap_set(ir_set.expr.args[0].expr).expr,
                           irast.FunctionCall):

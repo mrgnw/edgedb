@@ -161,3 +161,8 @@ class TestHttpEdgeQL(tb.EdgeQLTestCase):
             with self.assertRaisesRegex(edgedb.ProtocolError,
                                         r'cannot execute.*connection'):
                 self.edgeql_query(query)
+
+    def test_http_edgeql_session_func_01(self):
+        with self.assertRaisesRegex(edgedb.InternalServerError,
+                                    r'sys::advisory_lock requires a session'):
+            self.edgeql_query(r"SELECT sys::advisory_lock(1);")

@@ -86,6 +86,7 @@ class Compiler(compiler.BaseCompiler):
         sql_text, argmap = pg_compiler.compile_ir_to_sql(
             ir,
             pretty=debug.flags.edgeql_compile,
+            session_mode=False,
             expected_cardinality_one=True,
             output_format=pg_compiler.OutputFormat.JSON)
 

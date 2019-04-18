@@ -127,7 +127,7 @@ class ConstraintMech:
     @classmethod
     def _edgeql_ref_to_pg_constr(cls, subject, tree, schema, link_bias):
         sql_tree = compiler.compile_ir_to_sql_tree(
-            tree, singleton_mode=True)
+            tree, singleton_mode=True, session_mode=False)
 
         if isinstance(sql_tree, pg_ast.SelectStmt):
             # XXX: use ast pattern matcher for this
@@ -405,7 +405,7 @@ def ptr_default_to_col_default(schema, ptr, expr):
         return None
 
     sql_expr = compiler.compile_ir_to_sql_tree(
-        ir, singleton_mode=True)
+        ir, singleton_mode=True, session_mode=False)
     sql_text = codegen.SQLSourceGenerator.to_source(sql_expr)
 
     return sql_text

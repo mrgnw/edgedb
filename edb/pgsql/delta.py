@@ -437,7 +437,7 @@ class FunctionCommand:
                 raise ValueError('expression not constant')
 
             sql_tree = compiler.compile_ir_to_sql_tree(
-                ir.expr, singleton_mode=True)
+                ir.expr, singleton_mode=True, session_mode=False)
             return codegen.SQLSourceGenerator.to_source(sql_tree)
 
         except Exception as ex:
@@ -501,6 +501,9 @@ class CreateFunction(FunctionCommand, CreateObject,
             explicit_top_cast=irtyputils.type_to_typeref(
                 schema, func.get_return_type(schema)),
             output_format=compiler.OutputFormat.NATIVE,
+            # only a session_only function can use other session only
+            # functions inside the body safely
+            session_mode=func.get_session_only(schema),
             use_named_params=True)
 
         return self.make_function(func, sql_text, schema)
@@ -1533,7 +1536,7 @@ class CreateIndex(IndexCommand, CreateObject, adapts=s_indexes.CreateIndex):
             location='selector')
 
         sql_tree = compiler.compile_ir_to_sql_tree(
-            ir.expr, singleton_mode=True)
+            ir.expr, singleton_mode=True, session_mode=False)
         sql_expr = codegen.SQLSourceGenerator.to_source(sql_tree)
 
         if isinstance(sql_tree, pg_ast.ImplicitRowExpr):

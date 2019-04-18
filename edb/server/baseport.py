@@ -29,7 +29,7 @@ class Port:
     def __init__(self, *, server, loop,
                  pg_addr, pg_data_dir,
                  runstate_dir, internal_runstate_dir,
-                 dbindex):
+                 dbindex, session_mode=True):
 
         self._server = server
         self._loop = loop
@@ -43,6 +43,7 @@ class Port:
 
         self._compiler_manager = None
         self._serving = False
+        self._session_mode = session_mode
 
     def in_dev_mode(self):
         return self._devmode
@@ -75,7 +76,9 @@ class Port:
 
         self._compiler_manager = await procpool.create_manager(
             runstate_dir=self._internal_runstate_dir,
-            worker_args=(dict(host=self._pg_addr), self._pg_data_dir),
+            worker_args=(dict(host=self._pg_addr),
+                         self._pg_data_dir,
+                         self._session_mode),
             worker_cls=self.get_compiler_worker_cls(),
             name=self.get_compiler_worker_name(),
         )

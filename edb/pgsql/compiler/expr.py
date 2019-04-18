@@ -463,6 +463,9 @@ def compile_TypeRef(
 def compile_FunctionCall(
         expr: irast.Base, *, ctx: context.CompilerContextLevel) -> pgast.Base:
 
+    if not ctx.session_mode and expr.session_only:
+        raise RuntimeError(f'{expr.func_shortname} requires a session')
+
     if expr.typemod is ql_ft.TypeModifier.SET_OF:
         raise RuntimeError(
             'set returning functions are not supported in simple expressions')

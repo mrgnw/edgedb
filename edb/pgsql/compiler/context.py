@@ -58,6 +58,7 @@ class CompilerContextLevel(compiler.ContextLevel):
             self.argmap = collections.OrderedDict()
 
             self.singleton_mode = False
+            self.session_mode = False
 
             self.toplevel_stmt = None
             self.stmt = None
@@ -84,6 +85,7 @@ class CompilerContextLevel(compiler.ContextLevel):
             self.argmap = prevlevel.argmap
 
             self.singleton_mode = prevlevel.singleton_mode
+            self.session_mode = prevlevel.session_mode
 
             self.toplevel_stmt = prevlevel.toplevel_stmt
             self.stmt = prevlevel.stmt

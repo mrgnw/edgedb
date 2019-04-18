@@ -35,7 +35,7 @@ class BaseHttpPort(baseport.Port):
                  protocol: str,
                  **kwargs):
 
-        super().__init__(**kwargs)
+        super().__init__(session_mode=False, **kwargs)
 
         if protocol != self.get_proto_name():
             raise RuntimeError(f'unknown protocol {protocol!r}')

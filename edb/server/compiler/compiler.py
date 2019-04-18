@@ -133,10 +133,12 @@ class BaseCompiler:
     _dbname: typing.Optional[str]
     _cached_db: typing.Optional[CompilerDatabaseState]
 
-    def __init__(self, connect_args: dict, data_dir: str):
+    def __init__(self, connect_args: dict, data_dir: str,
+                 session_mode: bool=True):
         self._connect_args = connect_args
         self._dbname = None
         self._cached_db = None
+        self._session_mode = session_mode
 
         if data_dir is not None:
             self._data_dir = pathlib.Path(data_dir)
@@ -195,8 +197,9 @@ class BaseCompiler:
 
 class Compiler(BaseCompiler):
 
-    def __init__(self, connect_args: dict, data_dir: str):
-        super().__init__(connect_args, data_dir)
+    def __init__(self, connect_args: dict, data_dir: str,
+                 session_mode: bool=True):
+        super().__init__(connect_args, data_dir, session_mode)
 
         self._current_db_state = None
         self._bootstrap_mode = False
@@ -287,6 +290,7 @@ class Compiler(BaseCompiler):
             ir,
             pretty=debug.flags.edgeql_compile,
             expected_cardinality_one=ctx.expected_cardinality_one,
+            session_mode=self._session_mode,
             output_format=ctx.output_format)
 
         sql_bytes = sql_text.encode(defines.EDGEDB_ENCODING)
@@ -709,6 +713,7 @@ class Compiler(BaseCompiler):
             sql_text, _ = pg_compiler.compile_ir_to_sql(
                 ir,
                 pretty=debug.flags.edgeql_compile,
+                session_mode=self._session_mode,
                 output_format=pg_compiler.OutputFormat.JSONB)
 
             sql = (sql_text.encode(),)
