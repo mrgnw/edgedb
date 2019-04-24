@@ -46,6 +46,7 @@ ALTER TYPE sys::Role {
 CREATE FUNCTION
 sys::sleep(duration: std::float64) -> std::bool
 {
+    SET session_only := True;
     FROM SQL $$
     SELECT pg_sleep("duration") IS NOT NULL;
     $$;
